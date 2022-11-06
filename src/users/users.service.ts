@@ -13,6 +13,8 @@ export class UsersService {
   constructor(
     @InjectModel(User)
     private readonly userModel: typeof User,
+    @InjectModel(Address)
+    private readonly addressModel: typeof Address,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -55,11 +57,24 @@ export class UsersService {
     await user.destroy();
   }
 
-  async updateUser(id: string, patchUserDto: PatchUserDto): Promise<number[]> {
+  async updateUser(id: string, patchUserDto: PatchUserDto): Promise<{user: number[], address: number[]}> {
     return this.userModel.update(patchUserDto, {
       where: {
         userId: id,
       }
     })
+    .then((userRes) => {
+      if (patchUserDto.address) {
+        return this.addressModel.update(patchUserDto.address, {
+          where: {
+            userId: id,
+          }
+        }).then((addressRes) => {
+          return Promise.resolve({user: userRes, address: addressRes})
+        })
+      } else {
+        return Promise.resolve({user: userRes, address: []});
+      }
+    })    
   }
 }
