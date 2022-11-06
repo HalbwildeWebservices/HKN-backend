@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsPhoneNumber, IsString } from "class-validator";
+import { IPhoneNumber } from "hkn-common";
 
 
-export class CreatePhoneDto {
+export class CreatePhoneDto implements Partial<IPhoneNumber>{
     @ApiProperty({example: "+49123456789", description: "Phone number with international prefix"})
     @IsNotEmpty()
     @IsString()

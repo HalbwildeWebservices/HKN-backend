@@ -1,9 +1,11 @@
 import { randomUUID } from "crypto";
 import { BelongsTo, Column, Default, ForeignKey, IsUUID, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { User } from "./user.model";
+import { IPhoneNumber } from 'hkn-common'
+
 
 @Table
-export class PhoneNumber extends Model{
+export class PhoneNumber extends Model implements IPhoneNumber{
     @IsUUID(4)
     @PrimaryKey
     @Default(randomUUID)

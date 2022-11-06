@@ -18,5 +18,4 @@ export class PatchUserDto {
     @IsNotEmpty()
     readonly email: string;
 
-
 }

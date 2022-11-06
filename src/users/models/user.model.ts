@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { randomUUID } from 'crypto';
+import { EPermission, IPermission, IUser } from 'hkn-common';
 import { Column, IsUUID, Model, PrimaryKey, Table, Unique, ForeignKey, HasMany, BelongsTo, Default, HasOne } from 'sequelize-typescript';
 import { Address } from './address.model';
 import { PhoneNumber } from './phoneNumber.model';
 
 @Table
-export class User extends Model {
+export class User extends Model implements IUser{
   @IsUUID(4)
   @PrimaryKey
   @Default(randomUUID)
@@ -45,7 +46,7 @@ export class User extends Model {
 }
 
 @Table
-export class UserPermission extends Model {
+export class UserPermission extends Model implements IPermission {
   @IsUUID(4)
   @PrimaryKey
   @Default(randomUUID)
@@ -53,7 +54,7 @@ export class UserPermission extends Model {
   permissionId: string;
   
   @Column
-  name: string;
+  name: EPermission;
 
   @ForeignKey(() => User)
   @Column

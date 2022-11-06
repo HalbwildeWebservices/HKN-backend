@@ -1,9 +1,10 @@
 import { randomUUID } from "crypto";
 import { BelongsTo, Column, Default, ForeignKey, IsUUID, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { User } from "./user.model";
+import { IAddress } from "hkn-common";
 
 @Table
-export class Address extends Model {
+export class Address extends Model implements IAddress {
     @IsUUID(4)
     @PrimaryKey
     @Default(randomUUID)

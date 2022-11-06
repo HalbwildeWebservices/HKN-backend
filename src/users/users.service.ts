@@ -6,6 +6,7 @@ import { hash } from 'bcrypt'
 import { PatchUserDto } from './dto/patch-user.dto';
 import { Address } from './models/address.model';
 import { PhoneNumber } from './models/phoneNumber.model';
+import { EPermission } from 'hkn-common';
 
 @Injectable()
 export class UsersService {
@@ -22,7 +23,7 @@ export class UsersService {
       password,
       username: createUserDto.username,
       email: createUserDto.email,
-      permissions: [{name: 'default'}],
+      permissions: [{name: EPermission.DEFAULT}],
       address: createUserDto.address,
       phoneNumbers: createUserDto.phoneNumbers ?? [],
     }, {include: [UserPermission, Address, PhoneNumber]});

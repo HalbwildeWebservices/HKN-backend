@@ -3,7 +3,7 @@ import { IsString, IsNotEmpty, MinLength, MaxLength, IsEmail, IsNotEmptyObject, 
 import { CreateAddressDto } from './create-address-dto';
 import { CreatePhoneDto } from './create-phone.dto';
 
-export class CreateUserDto {
+export class CreateUserDto  {
   @ApiProperty({example: 'Manfred', description: "new user's first name"})
   @IsString()
   @IsNotEmpty()
