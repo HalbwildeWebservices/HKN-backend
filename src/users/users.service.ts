@@ -32,7 +32,7 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    return this.userModel.findAll({include: [UserPermission]});
+    return this.userModel.findAll({include: [UserPermission, Address, PhoneNumber]});
   }
 
   findOne(id: string): Promise<User> {
