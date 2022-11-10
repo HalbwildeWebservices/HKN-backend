@@ -45,7 +45,11 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.usersService.remove(id);
+  remove(@Param('id') id: string): Promise<User[]> {
+    return this.usersService
+      .remove(id)
+      .then(() => {
+        return this.usersService.findAll();
+      })
   }
 }
