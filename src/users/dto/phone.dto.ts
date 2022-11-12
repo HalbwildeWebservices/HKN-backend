@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsPhoneNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsPhoneNumber, IsString, IsUUID, } from "class-validator";
 import { IPhoneNumber } from "hkn-common";
 
 
@@ -14,4 +14,13 @@ export class CreatePhoneDto implements Partial<IPhoneNumber>{
     @IsNotEmpty()
     @IsString()
     description: string;
+}
+
+
+export class PatchPhoneDto extends CreatePhoneDto implements Partial<IPhoneNumber>{
+    
+    @ApiProperty({description: "phoneId", example: ''})
+    @IsUUID(4)
+    @IsNotEmpty()
+    readonly phoneId: string;
 }

@@ -3,7 +3,7 @@ import { IsNotEmpty } from "class-validator";
 import { IAddress } from "hkn-common";
 
 export class CreateAddressDto implements Partial<IAddress> {
-    @ApiProperty({example: "Bundesstrasse B498", description: "street"})
+    @ApiProperty({example: "Romkerhalle", description: "street"})
     @IsNotEmpty()
     readonly street: string;
 

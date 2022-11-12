@@ -38,8 +38,9 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  //@UseGuards(JwtAuthGuard)
   @Patch(':id')
-  updateUser(@Param('id') id: string, @Body() patchUserDto: PatchUserDto): Promise<{user: number[], address: number[]}> {
+  updateUser(@Param('id') id: string, @Body() patchUserDto: PatchUserDto): Promise<User> {
     return this.usersService.updateUser(id, patchUserDto);
   }
 
@@ -47,7 +48,7 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string): Promise<User[]> {
     return this.usersService
-      .remove(id)
+      .removeUser(id)
       .then(() => {
         return this.usersService.findAll();
       })

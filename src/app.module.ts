@@ -24,6 +24,7 @@ const socketPath = process.env.DBSOCK ?? '';
       database,
       autoLoadModels: true,
       synchronize: true,
+      logging: false,
     }),
     AuthModule,
     UsersModule,

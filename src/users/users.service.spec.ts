@@ -83,7 +83,7 @@ describe('UserService', () => {
       const findSpy = jest.spyOn(model, 'findOne').mockReturnValue({
         destroy: jest.fn(),
       } as any);
-      const retVal = await service.remove('2');
+      const retVal = await service.removeUser('2');
       expect(findSpy).toBeCalledWith({ where: { id: '2' } });
       expect(retVal).toBeUndefined();
     });
