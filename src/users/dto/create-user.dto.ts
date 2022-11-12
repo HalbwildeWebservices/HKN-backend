@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, MinLength, MaxLength, IsEmail, IsNotEmptyObject, IsOptional, IsArray} from 'class-validator';
 import { CreateAddressDto } from './create-address.dto';
-import { CreatePhoneDto } from './phone.dto';
+import { CreatePhoneDto } from '../../phoneNumbers/dto/phone.dto';
 
 export class CreateUserDto  {
   @ApiProperty({example: 'Manfred', description: "new user's first name"})

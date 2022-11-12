@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { BelongsTo, Column, Default, ForeignKey, IsUUID, Model, PrimaryKey, Table } from "sequelize-typescript";
-import { User } from "./user.model";
+import { User } from "../../users/models/user.model";
 import { IPhoneNumber } from 'hkn-common'
 
 

@@ -5,11 +5,10 @@ import { User, UserPermission } from './models/user.model';
 import { hash } from 'bcrypt'
 import { PatchUserDto } from './dto/patch-user.dto';
 import { Address } from './models/address.model';
-import { PhoneNumber } from './models/phoneNumber.model';
+import { PhoneNumber } from '../phoneNumbers/models/phoneNumber.model';
 import { EPermission } from 'hkn-common';
-import { PatchPhoneDto } from './dto/phone.dto';
 import { CreateAddressDto } from './dto/create-address.dto';
-import { randomUUID } from 'crypto';
+import { PhoneNumberService } from 'src/phoneNumbers/phone-number.service';
 
 @Injectable()
 export class UsersService {
@@ -19,10 +18,9 @@ export class UsersService {
     private readonly userModel: typeof User,
     @InjectModel(Address)
     private readonly addressModel: typeof Address,
-    @InjectModel(PhoneNumber)
-    private readonly phoneNumberModel: typeof PhoneNumber,
     @InjectModel(UserPermission)
     private readonly permissionModel: typeof UserPermission,
+    private readonly phoneNumberService: PhoneNumberService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -70,11 +68,8 @@ export class UsersService {
       }).then((destroyedAddresses) => this.logger.log(`destroyed ${destroyedAddresses} addresses for user ${id}`));
     }
     if (user.phoneNumbers) {
-      await this.phoneNumberModel.destroy({
-        where: {
-          userId: id
-        }
-      }).then((destroyedPhoneNumbers) => this.logger.log(`destroyed ${destroyedPhoneNumbers} phone numbers for user ${id}`));
+      this.phoneNumberService.deletePhoneNumbers(user.phoneNumbers.map((p) => p.phoneId))
+      .then((destroyedPhoneNumbers) => this.logger.log(`destroyed ${destroyedPhoneNumbers} phone numbers for user ${id}`));
     }
     if (user.permissions) {
       this.permissionModel.destroy({
@@ -87,22 +82,9 @@ export class UsersService {
   }
 
   async updateUser(id: string, patchUserDto: PatchUserDto): Promise<User> {
-    let currentUser: User;
-    try {
-      currentUser = await this.findOne(id);
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    let addressPromise: Promise<number[]> = Promise.resolve([]);
-    if (patchUserDto.address && currentUser.address) {
-      addressPromise = this.updateAddress(id, patchUserDto.address)
-    } else if (patchUserDto.address && !currentUser.address) {
-      addressPromise = this.addAddress(id, patchUserDto.address)
-        .then(() => {return [1]})
-    }
-    const phonePromise: Promise<PhoneNumber[]> = patchUserDto.phoneNumbers?.length 
-      ? this.updateOrAddPhoneNumbers(id, patchUserDto.phoneNumbers)
-      : Promise.resolve([])
+    const addressPromise: Promise<number[]> = patchUserDto.address 
+      ? this.updateAddress(id, patchUserDto.address)
+      : Promise.resolve([]);
     const userPromise = this.userModel.update(patchUserDto, {
       where: {
         userId: id,
@@ -123,27 +105,10 @@ export class UsersService {
         return [];
       })
       .then((res) => {
-        this.logger.log(`address updated ${res}`); 
-        return phonePromise;
-      })
-      .catch((err) => {
-        this.logger.error(err.message ?? 'general phone update error');
-        return [];
-      })
-      .then((res) => {
-        this.logger.log(`phone updated ${res.length}`); 
+        this.logger.log(`address updated ${res.length}`); 
         return this.findOne(id)
       });
     return chainedPromise;
-  }
-
-  async updateOrAddPhoneNumbers(userId: string, patchPhoneNumberDto: PatchPhoneDto[]) {
-    const updateObj = patchPhoneNumberDto.map((p) => {return {userId, ...p, phoneId: p.phoneId?.length > 0 ? p.phoneId : randomUUID()}})
-    this.logger.log(`phoneIds: ${updateObj.map((o) => o.phoneId).join(', ')}`)
-    return this.phoneNumberModel.bulkCreate(updateObj, 
-      {
-        updateOnDuplicate: ['number', 'description']
-      })
   }
 
   async updateAddress(userId: string, address: CreateAddressDto) {

@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 import { EPermission, IPermission, IUser } from 'hkn-common';
 import { Column, IsUUID, Model, PrimaryKey, Table, Unique, ForeignKey, HasMany, BelongsTo, Default, HasOne } from 'sequelize-typescript';
 import { Address } from './address.model';
-import { PhoneNumber } from './phoneNumber.model';
+import { PhoneNumber } from '../../phoneNumbers/models/phoneNumber.model';
 
 @Table
 export class User extends Model implements IUser{

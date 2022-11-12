@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsEmail, IsNotEmpty, IsNotEmptyObject, IsOptional, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsNotEmptyObject, IsOptional, IsString } from "class-validator";
 import { CreateAddressDto } from "./create-address.dto";
-import { PatchPhoneDto } from "./phone.dto";
 
 
 export class PatchUserDto {
@@ -27,10 +26,4 @@ export class PatchUserDto {
     @IsOptional()
     @IsNotEmptyObject()
     readonly address?: CreateAddressDto; 
-
-    @ApiProperty({description: 'phoneNumbers', required: false, type: [PatchPhoneDto]})
-    @IsOptional()
-    @IsArray()
-    readonly phoneNumbers?: PatchPhoneDto[];
-
 }
