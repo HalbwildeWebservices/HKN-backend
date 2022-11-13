@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { PhoneNumberModule } from './phoneNumbers/phone-number.module';
+import { PermissionsModule } from './permissions/permissions.module';
 
 const username = process.env.DBUSER ?? '';
 const password = process.env.DBPW ?? '';
@@ -30,6 +31,7 @@ const socketPath = process.env.DBSOCK ?? '';
     AuthModule,
     UsersModule,
     PhoneNumberModule,
+    PermissionsModule,
   ],
   controllers: [
     AppController,

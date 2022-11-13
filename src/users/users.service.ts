@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User, UserPermission } from './models/user.model';
+import { User } from './models/user.model';
 import { hash } from 'bcrypt'
 import { PatchUserDto } from './dto/patch-user.dto';
 import { Address } from './models/address.model';
@@ -9,6 +9,8 @@ import { PhoneNumber } from '../phoneNumbers/models/phoneNumber.model';
 import { EPermission } from 'hkn-common';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { PhoneNumberService } from 'src/phoneNumbers/phone-number.service';
+import { UserPermission } from 'src/permissions/models/permissions.model';
+import { PermissionsService } from 'src/permissions/permissions.service';
 
 @Injectable()
 export class UsersService {
@@ -18,8 +20,7 @@ export class UsersService {
     private readonly userModel: typeof User,
     @InjectModel(Address)
     private readonly addressModel: typeof Address,
-    @InjectModel(UserPermission)
-    private readonly permissionModel: typeof UserPermission,
+    private readonly permissionsService: PermissionsService,
     private readonly phoneNumberService: PhoneNumberService,
   ) {}
 
@@ -72,11 +73,8 @@ export class UsersService {
       .then((destroyedPhoneNumbers) => this.logger.log(`destroyed ${destroyedPhoneNumbers} phone numbers for user ${id}`));
     }
     if (user.permissions) {
-      this.permissionModel.destroy({
-        where: {
-          userId: id
-        }
-      }).then((destroyedPermissions) => this.logger.log(`destroyed ${destroyedPermissions} permissions for user ${id}`));
+      this.permissionsService.removePermissions(user.userId)
+      .then((destroyedPermissions) => this.logger.log(`destroyed ${destroyedPermissions} permissions for user ${id}`));
     }
     await user.destroy().then(() => this.logger.log(`destroyed user ${id}`));
   }
