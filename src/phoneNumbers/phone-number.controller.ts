@@ -18,7 +18,7 @@ export class PhoneNumberController {
   
     @Delete(':phoneId')
     deletePhoneNumber(@Param('phoneId') phoneId: string): Promise<number> {
-      return this.phoneNumberService.deletePhoneNumbers(phoneId)
+      return this.phoneNumberService.deletePhoneNumbersById(phoneId)
     }
 
     @Get(':phoneId')

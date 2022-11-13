@@ -69,11 +69,11 @@ export class UsersService {
       }).then((destroyedAddresses) => this.logger.log(`destroyed ${destroyedAddresses} addresses for user ${id}`));
     }
     if (user.phoneNumbers) {
-      this.phoneNumberService.deletePhoneNumbers(user.phoneNumbers.map((p) => p.phoneId))
+      this.phoneNumberService.deletePhoneNumbersById(user.phoneNumbers.map((p) => p.phoneId))
       .then((destroyedPhoneNumbers) => this.logger.log(`destroyed ${destroyedPhoneNumbers} phone numbers for user ${id}`));
     }
     if (user.permissions) {
-      this.permissionsService.removePermissions(user.userId)
+      this.permissionsService.removePermissionsByUser(user.userId)
       .then((destroyedPermissions) => this.logger.log(`destroyed ${destroyedPermissions} permissions for user ${id}`));
     }
     await user.destroy().then(() => this.logger.log(`destroyed user ${id}`));

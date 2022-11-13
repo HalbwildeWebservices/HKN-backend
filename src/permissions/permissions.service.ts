@@ -12,7 +12,7 @@ export class PermissionsService {
         @InjectModel(UserPermission)
         private readonly permissionModel: typeof UserPermission) {}
 
-    removePermissions(userId: string) {
+    removePermissionsByUser(userId: string) {
         return this.permissionModel.destroy({
             where: {
                 userId
@@ -20,7 +20,15 @@ export class PermissionsService {
         })
     }
 
-    getPermissions(userId: string) {
+    removePermissionById(permissionId: string | string[]) {
+        return this.permissionModel.destroy({
+            where: {
+                permissionId
+            }
+        })
+    }
+
+    getPermissionsByUser(userId: string) {
         return this.permissionModel.findAll({
             where: {
                 userId
@@ -28,8 +36,16 @@ export class PermissionsService {
         })
     }
 
+    getPermissionsById(permissionId: string) {
+        return this.permissionModel.findOne({
+            where: {
+                permissionId
+            }
+        })
+    }
+
     async setPermissions(userId: string, setPermissionsDto: SetPermissionsDto) {
-        const currentPermissions = await this.getPermissions(userId);
+        const currentPermissions = await this.getPermissionsByUser(userId);
         const currentPermissionNames = currentPermissions.map((p) => p.name);
         const permissionsToAdd = setPermissionsDto.permissions.filter((p) => !currentPermissionNames.includes(p)).map((name) => {return {name, userId}});
         const permissionNamesToDelete = currentPermissionNames.filter((p) => !setPermissionsDto.permissions.includes(p));
@@ -43,7 +59,7 @@ export class PermissionsService {
             return this.permissionModel.bulkCreate(permissionsToAdd);
         }).then(() => {
             this.logger.log(`added n=${permissionsToAdd.length} permissions for userId=${userId}`)
-            return this.getPermissions(userId);
+            return this.getPermissionsByUser(userId);
         })
     }
 }

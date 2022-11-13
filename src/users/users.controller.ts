@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -7,12 +7,18 @@ import { CreatePhoneDto, PatchPhoneDto } from '../phoneNumbers/dto/phone.dto';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
 import { PhoneNumberService } from 'src/phoneNumbers/phone-number.service';
+import { SetPermissionsDto } from 'src/permissions/dto/permissions.dto';
+import { PermissionsService } from 'src/permissions/permissions.service';
 
 @ApiBearerAuth()
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService, private readonly phoneNumberService: PhoneNumberService) {}
+  constructor(
+    private readonly usersService: UsersService, 
+    private readonly phoneNumberService: PhoneNumberService,
+    private readonly permissionsService: PermissionsService,
+    ) {}
 
   @Post()
   //@UseGuards(JwtAuthGuard)
@@ -52,25 +58,45 @@ export class UsersController {
       .then(() => {return this.usersService.findOne(userId)})
   }
 
-  @Delete(':userId/phone-numbers/:phoneId')
-  deletePhoneNumber(@Param('userId') userId: string, @Param('phoneId') phoneId: string): Promise<User> {
-    return this.phoneNumberService.deletePhoneNumbers(phoneId)
-      .then(() => {return this.usersService.findOne(userId)})
-  }
-
   @Post(':userId/phone-numbers/')
   addPhoneNumber(@Param('userId') userId: string,  @Body() createPhoneDto: CreatePhoneDto): Promise<User> {
     return this.phoneNumberService.addPhoneNumber(userId, createPhoneDto)
       .then(() => {return this.usersService.findOne(userId)})
   }
 
+
+  @Put(':userId/permissions') 
+  setPermissions(@Param('userId') userId: string, @Body() setPermissionsDto: SetPermissionsDto) {
+      return this.permissionsService.setPermissions(userId, setPermissionsDto);
+  }
+
   @UseGuards(JwtAuthGuard)
-  @Delete(':id')
-  remove(@Param('id') id: string): Promise<User[]> {
+  @Delete(':userId')
+  remove(@Param('userId') userId: string): Promise<User[]> {
     return this.usersService
-      .removeUser(id)
+      .removeUser(userId)
       .then(() => {
         return this.usersService.findAll();
       })
   }
+
+  @Delete(':userId/permissions') 
+  deletePermissions(@Param('userId') userId: string) {
+      return this.permissionsService.removePermissionsByUser(userId);
+  }
+
+  @Delete(':userId/phone-numbers') 
+  deletePhoneNumbers(@Param('userId') userId: string) {
+    return this.phoneNumberService.deletePhoneNumbersByUser(userId)
+      .then(() => {return this.usersService.findOne(userId)})
+
+  }
+
+  @Delete(':userId/phone-numbers/:phoneId')
+  deletePhoneNumber(@Param('userId') userId: string, @Param('phoneId') phoneId: string): Promise<User> {
+    return this.phoneNumberService.deletePhoneNumbersById(phoneId)
+      .then(() => {return this.usersService.findOne(userId)})
+  }
+
+
 }

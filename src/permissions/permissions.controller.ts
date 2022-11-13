@@ -1,6 +1,5 @@
-import { Controller, Get, Param, Put, Body } from '@nestjs/common';
+import { Controller, Get, Param, Delete } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { SetPermissionsDto } from './dto/permissions.dto';
 import { PermissionsService } from './permissions.service';
 
 @ApiBearerAuth()
@@ -10,14 +9,14 @@ export class PermissionsController {
 
     constructor(private readonly permissionsService: PermissionsService) {}
 
-    @Get(':userId')
-    getPermissions(@Param('userId') userId: string) {
-        return this.permissionsService.getPermissions(userId)
+    @Get(':permissionId')
+    getPermissions(@Param('permissionId') permissionId: string) {
+        return this.permissionsService.getPermissionsById(permissionId)
     }
 
-    @Put(':userId') 
-    setPermissions(@Param('userId') userId: string, @Body() setPermissionsDto: SetPermissionsDto) {
-        return this.permissionsService.setPermissions(userId, setPermissionsDto);
+    @Delete(':permissionId')
+    deletePermission(@Param('permissionId') permissionId: string) {
+        return this.permissionsService.removePermissionById(permissionId);
     }
 
 }

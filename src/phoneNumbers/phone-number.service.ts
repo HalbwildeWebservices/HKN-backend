@@ -22,7 +22,7 @@ export class PhoneNumberService {
         });
     }
 
-    deletePhoneNumbers(phoneId: string | string[]) {
+    deletePhoneNumbersById(phoneId: string | string[]) {
         return this.phoneNumberModel.destroy({
             where: {
                 phoneId,
@@ -31,6 +31,18 @@ export class PhoneNumberService {
         .then((res) => { 
             const phoneIds = Array.isArray(phoneId) ? `[${phoneId.join(', ')}]` : phoneId;
             this.logger.log(`destroyed phone number(s) phoneId=${phoneIds}`);
+            return res;
+        });
+    }
+
+    deletePhoneNumbersByUser(userId: string) {
+        return this.phoneNumberModel.destroy({
+            where: {
+                userId,
+            }
+        })
+        .then((res) => { 
+            this.logger.log(`destroyed ${res} phone number(s) for userId=${userId}`);
             return res;
         });
     }
