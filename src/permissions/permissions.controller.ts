@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PermissionsService } from './permissions.service';
 
@@ -10,12 +10,12 @@ export class PermissionsController {
     constructor(private readonly permissionsService: PermissionsService) {}
 
     @Get(':permissionId')
-    getPermissions(@Param('permissionId') permissionId: string) {
+    getPermissions(@Param('permissionId', ParseUUIDPipe) permissionId: string) {
         return this.permissionsService.getPermissionsById(permissionId)
     }
 
     @Delete(':permissionId')
-    deletePermission(@Param('permissionId') permissionId: string) {
+    deletePermission(@Param('permissionId', ParseUUIDPipe) permissionId: string) {
         return this.permissionsService.removePermissionById(permissionId);
     }
 
