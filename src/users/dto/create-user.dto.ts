@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, MinLength, MaxLength, IsEmail, IsNotEmptyObject, IsOptional, IsArray} from 'class-validator';
+import { IsString, IsNotEmpty, MinLength, MaxLength, IsEmail, IsNotEmptyObject, IsArray} from 'class-validator';
 import { CreateAddressDto } from './create-address.dto';
 import { CreatePhoneDto } from '../../phoneNumbers/dto/phone.dto';
+import { ICreateUserRequest } from 'hkn-common';
 
-export class CreateUserDto  {
+export class CreateUserDto implements ICreateUserRequest  {
   @ApiProperty({example: 'Manfred', description: "new user's first name"})
   @IsString()
   @IsNotEmpty()
@@ -35,8 +36,7 @@ export class CreateUserDto  {
   @IsNotEmptyObject()
   readonly address: CreateAddressDto;
 
-  @ApiProperty({description: "phone numbers", required: false, type: [CreatePhoneDto]})
-  @IsOptional()
+  @ApiProperty({description: "phone numbers", type: [CreatePhoneDto]})
   @IsArray()
-  readonly phoneNumbers?: CreatePhoneDto[];
+  readonly phoneNumbers: CreatePhoneDto[];
 }

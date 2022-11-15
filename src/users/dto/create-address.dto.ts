@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
-import { IAddress } from "hkn-common";
+import { IAddress, ICreateAddressRequest } from "hkn-common";
+import { Address } from "../models/address.model";
 
-export class CreateAddressDto implements Partial<IAddress> {
+export class CreateAddressDto implements ICreateAddressRequest {
     @ApiProperty({example: "Romkerhalle", description: "street"})
     @IsNotEmpty()
     readonly street: string;
@@ -23,4 +24,19 @@ export class CreateAddressDto implements Partial<IAddress> {
     @IsNotEmpty()
     readonly country: string;
 
+}
+
+export class AdressResponseDto implements IAddress {
+    addressId: string;
+    street: string;
+    houseNumber: string;
+    zipCode: string;
+    town: string;
+    country: string;
+    
+    constructor(address: Address) {
+        const values = address.get()
+        Object.assign(this, values);
+
+    }
 }
