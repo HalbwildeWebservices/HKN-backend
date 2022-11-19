@@ -6,9 +6,9 @@ import { IPhoneNumber } from 'hkn-common'
 
 @Table
 export class PhoneNumber extends Model implements IPhoneNumber{
-    @IsUUID(4)
     @PrimaryKey
     @Default(randomUUID)
+    @IsUUID(4)
     @Column
     phoneId: string
     

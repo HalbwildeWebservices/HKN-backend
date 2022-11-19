@@ -26,6 +26,7 @@ export class UsersController {
   create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     return this.usersService
       .create(createUserDto)
+      .then((user) => {return new UserResponseDto(user)})
       .catch((err) => {console.error(err); return err.errors.map((e) => e.message).join(", ")});
   }
 
