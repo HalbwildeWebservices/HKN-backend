@@ -48,7 +48,7 @@ export class PhoneNumberService {
     }
     
     addPhoneNumber(userId: string, createPhoneDto: CreatePhoneDto) {
-        const toCreate = {createPhoneDto, userId}
+        const toCreate = {...createPhoneDto, userId}
         return this.phoneNumberModel
             .create(toCreate)
             .then((phoneNumber) => {
