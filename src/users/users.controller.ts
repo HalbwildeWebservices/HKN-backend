@@ -9,6 +9,8 @@ import { PhoneNumberService } from 'src/phoneNumbers/phone-number.service';
 import { SetPermissionsDto } from 'src/permissions/dto/permissions.dto';
 import { PermissionsService } from 'src/permissions/permissions.service';
 import { UserResponseDto } from './dto/user-response.dto';
+import { PermissionResponseDto } from 'src/permissions/dto/permissions.dto';
+import { IPermissionResponse } from 'hkn-common';
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -52,6 +54,15 @@ export class UsersController {
       .then((user) => {return new UserResponseDto(user)});
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get(':userId/permissions')
+  getPermissions(@Param('userId', ParseUUIDPipe) userId: string): Promise<IPermissionResponse> {
+    return this.usersService.findOne(userId)
+      .then((user) => {
+        return {permissions: user.permissions.map((p) => {return new PermissionResponseDto(p)})}
+      });
+  }
+
   //@UseGuards(JwtAuthGuard)
   @Patch(':userId')
   updateUser(@Param('userId', ParseUUIDPipe) userId: string, @Body() patchUserDto: PatchUserDto): Promise<UserResponseDto> {
@@ -76,7 +87,8 @@ export class UsersController {
 
   @Put(':userId/permissions') 
   setPermissions(@Param('userId', ParseUUIDPipe) userId: string, @Body() setPermissionsDto: SetPermissionsDto): Promise<UserResponseDto> {
-      return this.permissionsService.setPermissions(userId, setPermissionsDto)
+    const uniquePermissions = [...new Set(setPermissionsDto.permissions)];  
+    return this.permissionsService.setPermissions(userId, {permissions: uniquePermissions})
         .then(() => {return this.usersService.findOne(userId)})
         .then((user) => {return new UserResponseDto(user)});
   }
