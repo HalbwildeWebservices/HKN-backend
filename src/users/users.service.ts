@@ -53,6 +53,7 @@ export class UsersService {
 
   findByUsername(username: string): Promise<User> {
     return this.userModel.findOne({
+      include: [Address, UserPermission, PhoneNumber],
       where: {
         username,
       },
@@ -120,5 +121,9 @@ export class UsersService {
   async addAddress(userId: string, address: CreateAddressDto) {
     const addressToSet = {...address, userId };
     return this.addressModel.create(addressToSet)
+  }
+
+  async findUserPermissions(userId: string) {
+    return this.permissionsService.getPermissionsByUser(userId);
   }
 }

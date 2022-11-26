@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
+import { UserResponseDto } from 'src/users/dto/user-response.dto';
 //import { readFileSync } from 'fs';
 
 @Injectable()
 export class AuthService {
   //private readonly privateKey: Buffer;
+  private readonly logger = new Logger('AuthService');
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
@@ -22,14 +24,22 @@ export class AuthService {
     const user = await this.usersService.findByUsername(username);
     const passOk = await compare(pass, user.password);
     if (user && passOk) {
-      const { password, ...result } = user;
+      const result = new UserResponseDto(user);
       return result;
     }
     return null;
   }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+  async login(user: UserResponseDto) {
+    this.logger.log(`login of user ${user.username} (${user.userId})`);
+    const payload = { 
+      preferred_username: user.username, 
+      sub: user.userId, 
+      iat: Date.now(), 
+      iss: 'Halbwilde Kajakfahrer Norddeutschland', 
+      updated_at: user.updatedAt.valueOf(),
+      roles: user.permissions.map((p) => p.name),
+    };
     return {
       access_token: this.jwtService.sign(payload, { secret: process.env.TOKENKEY}),
     };
