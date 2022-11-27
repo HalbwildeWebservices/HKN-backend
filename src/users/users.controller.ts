@@ -11,6 +11,10 @@ import { PermissionsService } from 'src/permissions/permissions.service';
 import { UserResponseDto } from './dto/user-response.dto';
 import { PermissionResponseDto } from 'src/permissions/dto/permissions.dto';
 import { IPermissionResponse } from 'hkn-common';
+import { PoliciesGuard } from 'src/policies/policies.guard';
+import { CheckPolicies } from 'src/policies/check-policies.decorator';
+import { AppAbility } from 'src/casl/casl-ability.factory';
+import { Action } from 'src/casl/actions';
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -32,7 +36,6 @@ export class UsersController {
       .catch((err) => {console.error(err); return err.errors.map((e) => e.message).join(", ")});
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiResponse({
     status: 200,
@@ -40,6 +43,11 @@ export class UsersController {
     type: UserResponseDto,
     isArray: true,
   })
+  @UseGuards(
+    JwtAuthGuard,
+    PoliciesGuard,
+  )
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.READ, UserResponseDto))
   findAll(): Promise<UserResponseDto[]> {
     return this.usersService.findAll()
       .then((users) => {

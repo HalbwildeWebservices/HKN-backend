@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { PhoneNumberModule } from './phoneNumbers/phone-number.module';
 import { PermissionsModule } from './permissions/permissions.module';
+import { CaslModule } from './casl/casl.module';
 
 const username = process.env.DBUSER ?? '';
 const password = process.env.DBPW ?? '';
@@ -32,6 +33,7 @@ const socketPath = process.env.DBSOCK ?? '';
     UsersModule,
     PhoneNumberModule,
     PermissionsModule,
+    CaslModule,
   ],
   controllers: [
     AppController,
