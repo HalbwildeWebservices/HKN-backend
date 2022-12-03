@@ -8,10 +8,13 @@ export class PermissionsService {
     
     private readonly logger = new Logger('PermissionsService');
     constructor(
-        
         @InjectModel(UserPermission)
         private readonly permissionModel: typeof UserPermission) {}
 
+    /**
+     * Delete all permissions for user identified by userId
+     * @returns the number of deleted permissions
+     */
     removePermissionsByUser(userId: string) {
         return this.permissionModel.destroy({
             where: {
@@ -20,6 +23,9 @@ export class PermissionsService {
         })
     }
 
+    /**
+     * Get single permission identified by permissionId
+     */
     removePermissionById(permissionId: string | string[]) {
         return this.permissionModel.destroy({
             where: {
@@ -28,6 +34,9 @@ export class PermissionsService {
         })
     }
 
+    /**
+     * Get permissions for user identified by userId
+     */
     getPermissionsByUser(userId: string) {
         return this.permissionModel.findAll({
             where: {
@@ -36,6 +45,9 @@ export class PermissionsService {
         })
     }
 
+    /**
+     * Get single permission identified by permissionId
+     */
     getPermissionsById(permissionId: string) {
         return this.permissionModel.findOne({
             where: {
@@ -44,6 +56,12 @@ export class PermissionsService {
         })
     }
 
+    /**
+     * Set permissions for user
+     * @param userId the userId of the user to set permissions for
+     * @param setPermissionsDto The permissions to set
+     * @returns the user's permissions after the operation
+     */
     async setPermissions(userId: string, setPermissionsDto: SetPermissionsDto) {
         const currentPermissions = await this.getPermissionsByUser(userId);
         const currentPermissionNames = currentPermissions.map((p) => p.name);

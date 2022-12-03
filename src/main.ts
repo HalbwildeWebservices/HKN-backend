@@ -25,6 +25,13 @@ async function bootstrap() {
   const swaggerUserApiConfig = new DocumentBuilder()
     .setTitle('HKN user API')
     .setDescription('The HKN user management REST API')
+    .addBearerAuth({
+      type: 'http', 
+      in: 'header', 
+      scheme: 'bearer', 
+      bearerFormat: 'JWT',
+      name: 'Authorization'
+    })
     .addTag('users')
     .addTag('auth')
     .setVersion('0.1')

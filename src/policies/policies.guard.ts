@@ -1,9 +1,10 @@
 import { CanActivate, ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Action } from 'src/casl/actions';
 import { AppAbility, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
+import { PermissionsService } from 'src/permissions/permissions.service';
 import { UserResponseDto } from 'src/users/dto/user-response.dto';
 import { CHECK_POLICIES_KEY } from './check-policies.decorator';
+import { ReadOwnPermissionsPolicy } from './policies.classes';
 import { PolicyHandler } from './policies.interfaces';
 
 @Injectable()
@@ -13,6 +14,7 @@ export class PoliciesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private caslAbilityFactory: CaslAbilityFactory,
+    private permissionService: PermissionsService,
   ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -20,23 +22,38 @@ export class PoliciesGuard implements CanActivate {
       CHECK_POLICIES_KEY,
       context.getHandler(),
     ) || [];
-
-    this.logger.log(`found ${policyHandlers.length} handlers`)
-    const { user }= context.switchToHttp().getRequest();
+    
+    //user: the logged-in user
+    //userId: the userId from the request
+    
+    const { user, params } = context.switchToHttp().getRequest<{user: UserResponseDto, params?: {userId?: string}}>();
     if (!user) {
       return false;
     }
+    this.logger.log(`loggedIn user ${user.username} ${user.userId}`);
+    this.logger.log(`userId param ${params.userId}`)
     const ability = this.caslAbilityFactory.abilitiesForUser(user);
-    this.logger.log(ability.can(Action.READ, UserResponseDto));
 
-    return policyHandlers.every((handler) => this.execPolicyHandler(handler, ability));
+    const handlerResults = policyHandlers.map((h) => this.execPolicyHandler(h, ability, params.userId));
+    return Promise.all(handlerResults).then((res) => {return res.every((r) => r === true)})
+
+    //const canActivate = (await Promise.all(handlerResultPromises)).every((p) => p === true);
+    //return canActivate;
+    //return await policyHandlers.every(async (handler) => await this.execPolicyHandler(handler, ability, params.userId));
   }
   
-  private execPolicyHandler(handler: PolicyHandler, ability: AppAbility) {
+  private async execPolicyHandler(handler: PolicyHandler, ability: AppAbility, userId: string | undefined) {
     if (typeof handler === 'function') {
       return handler(ability);
+    } else if (handler instanceof ReadOwnPermissionsPolicy && userId !== undefined) {
+        //couldn't make it work with Permission array so far
+        const permissions = await this.permissionService.getPermissionsByUser(userId);
+        return permissions.every((p) => handler.handle(ability, p));
+
+    } else {
+       return false;
     }
-    return handler.handle(ability);
+    
   }
 
 }
