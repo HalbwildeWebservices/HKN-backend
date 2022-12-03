@@ -7,10 +7,11 @@ import { UsersService } from './users.service';
 import { PhoneNumberModule } from 'src/phoneNumbers/phone-number.module';
 import { PermissionsModule } from 'src/permissions/permissions.module';
 import { CaslModule } from 'src/casl/casl.module';
+import { Legal } from './models/legal.model';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([User, Address]),
+    SequelizeModule.forFeature([User, Address, Legal]),
     PhoneNumberModule,
     PermissionsModule,
     CaslModule,

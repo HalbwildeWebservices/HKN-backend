@@ -4,6 +4,7 @@ import { Column, IsUUID, Model, PrimaryKey, Table, Unique, HasMany, Default, Has
 import { Address } from './address.model';
 import { PhoneNumber } from '../../phoneNumbers/models/phoneNumber.model';
 import { UserPermission } from 'src/permissions/models/permissions.model';
+import { Legal } from './legal.model';
 //import { IUser } from 'hkn-common';
 
 @Table
@@ -47,6 +48,9 @@ export class User extends Model {
 
   @HasOne(() => Address)
   address: Address;
+
+  @HasOne(() => Legal)
+  legal: Legal;
 
   @HasMany(() => PhoneNumber)
   phoneNumbers: PhoneNumber[];

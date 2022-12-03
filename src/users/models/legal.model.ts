@@ -1,33 +1,32 @@
 import { randomUUID } from "crypto";
 import { BelongsTo, Column, Default, ForeignKey, IsUUID, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { User } from "./user.model";
-import { IAddress } from "hkn-common";
+
 
 /**
- * Address Model. 1:1 relation with User
+ * Legal Model. 1:1 relation with User
  */
+
 @Table
-export class Address extends Model implements IAddress {
+export class Legal extends Model {
     @IsUUID(4)
     @PrimaryKey
     @Default(randomUUID)
     @Column
-    addressId: string;
+    legalId: string;
 
     @Column
-    street: string;
+    privacyAcceptedAt: Date;
 
     @Column
-    houseNumber: string;
+    privacyUpdateReq: boolean;
 
     @Column
-    zipCode: string;
+    termsAcceptedAt: Date;
 
     @Column
-    town: string;
+    termsUpdateReq: boolean;
 
-    @Column
-    country: string;
     
     @ForeignKey(() => User)
     @Column
