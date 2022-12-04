@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, IsNotEmptyObject, IsOptional, IsString } from "class-validator";
 import { CreateAddressDto } from "./create-address.dto";
+import { CreateLegalDto } from "./create-legal.dto";
 
 
 export class PatchUserDto {
@@ -26,4 +27,7 @@ export class PatchUserDto {
     @IsOptional()
     @IsNotEmptyObject()
     readonly address?: CreateAddressDto; 
+
+    @ApiProperty({description: 'accept terms of use and privacy declaration'})
+    readonly legal: CreateLegalDto;
 }

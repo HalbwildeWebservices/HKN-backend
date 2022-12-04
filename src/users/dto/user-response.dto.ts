@@ -1,5 +1,6 @@
 import { Exclude } from "class-transformer";
 import { IUserResponse } from "hkn-common";
+import { ILegal } from "hkn-common/dist/src/legal";
 import { PermissionResponseDto } from "src/permissions/dto/permissions.dto";
 import { PhoneResponseDto } from "src/phoneNumbers/dto/phone.dto";
 import { AdressResponseDto } from "src/users/dto/create-address.dto"
@@ -22,6 +23,9 @@ export class UserResponseDto implements IUserResponse {
     @Exclude()
     password: string;
 
+    @Exclude()
+    legal: Omit<ILegal, 'updatedAt' | 'createdAt'> & Partial<Pick<ILegal, 'updatedAt' | 'createdAt'>>
+
     constructor(user: User) {
         const values = user.get();
         const {address, phoneNumbers, permissions, ...rest} = values 
@@ -29,6 +33,7 @@ export class UserResponseDto implements IUserResponse {
         this.address = new AdressResponseDto(user.address);
         this.permissions = user.permissions.map((p) => new PermissionResponseDto(p));
         this.phoneNumbers = user.phoneNumbers.map((p) => new PhoneResponseDto(p));
+        this.legal = user.legal?.get();
     }
 
 }

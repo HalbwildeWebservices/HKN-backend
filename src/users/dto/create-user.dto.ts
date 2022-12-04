@@ -3,6 +3,7 @@ import { IsString, IsNotEmpty, MinLength, MaxLength, IsEmail, IsNotEmptyObject, 
 import { CreateAddressDto } from './create-address.dto';
 import { CreatePhoneDto } from '../../phoneNumbers/dto/phone.dto';
 import { ICreateUserRequest } from 'hkn-common';
+import { CreateLegalDto } from './create-legal.dto';
 
 export class CreateUserDto implements ICreateUserRequest  {
   @ApiProperty({example: 'Manfred', description: "new user's first name"})
@@ -39,4 +40,7 @@ export class CreateUserDto implements ICreateUserRequest  {
   @ApiProperty({description: "phone numbers", type: [CreatePhoneDto]})
   @IsArray()
   readonly phoneNumbers: CreatePhoneDto[];
+
+  @ApiProperty({description: "accept terms + privacy declaration", type: CreateLegalDto})
+  readonly legal: CreateLegalDto;
 }
