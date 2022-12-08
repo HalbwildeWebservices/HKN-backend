@@ -192,6 +192,16 @@ export class UsersService {
       updatedLegal.privacyAcceptedAt = date;
       updatedLegal.termsAcceptedAt = date;
     }
+    //workaround for existing users without legals
+    const found = await this.legalModel.findOne({
+      where: {
+        userId
+      }
+    });
+    if (!found) {
+      this.legalModel.create(updatedLegal);
+      this.logger.log(`new legals created for userId=${userId}`);
+    }
     return this.legalModel.update(updatedLegal, {
       where: { userId },
     });
