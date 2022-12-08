@@ -199,7 +199,7 @@ export class UsersService {
       }
     });
     if (!found) {
-      this.legalModel.create(updatedLegal);
+      this.legalModel.create({...updatedLegal, userId});
       this.logger.log(`new legals created for userId=${userId}`);
     }
     return this.legalModel.update(updatedLegal, {
