@@ -12,7 +12,8 @@ export enum Action {
      */
     READ = 'read',
     /**
-     * list all entities
+     * list all entities; 
+     * abbreviation instead of loading all and checking
      */
     LIST = 'list',
     /**

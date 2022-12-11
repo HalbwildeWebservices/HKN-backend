@@ -46,6 +46,14 @@ export class PhoneNumberService {
             return res;
         });
     }
+
+    getPhoneNumbersByUser(userId: string) {
+        return this.phoneNumberModel.findAll({
+            where: {
+                userId,
+            }
+        })
+    }
     
     addPhoneNumber(userId: string, createPhoneDto: CreatePhoneDto) {
         const toCreate = {...createPhoneDto, userId}
