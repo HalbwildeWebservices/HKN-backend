@@ -5,12 +5,14 @@ import { Action } from "./actions";
 import { UserPermission } from "src/permissions/models/permissions.model";
 import { User } from "src/users/models/user.model";
 import { PhoneNumber } from "src/phoneNumbers/models/phoneNumber.model";
+import { PaddleEvent } from "src/paddle-event/models/paddle-event.model";
 
 
 type Subjects = InferSubjects<
     typeof User
     | typeof UserPermission 
     | typeof PhoneNumber
+    | typeof PaddleEvent
     | typeof Array<UserPermission> 
     | 'all'
 >
@@ -45,6 +47,16 @@ export class CaslAbilityFactory {
         if (permissionList.includes(EPermission.UPDATE_USER)) {
             can(Action.UPDATE, [User, PhoneNumber]);
         }
+        if (permissionList.includes(EPermission.ADD_EVENT)) {
+            can([Action.CREATE, Action.UPDATE], PaddleEvent);
+        }
+        if (permissionList.includes(EPermission.DELETE_EVENT)) {
+            can(Action.DELETE, PaddleEvent)
+        }
+        if (permissionList.includes(EPermission.UPDATE_EVENT)) {
+            can(Action.UPDATE, PaddleEvent)
+        }
+        
         //read, update, delete self
         can([Action.READ, Action.UPDATE, Action.DELETE], User, {userId: user.userId});
         //read own permissions
@@ -53,6 +65,14 @@ export class CaslAbilityFactory {
         //manage own phone numbers
         can(Action.MANAGE, PhoneNumber, {userId: user.userId});
         
+        //manage self-created events
+        can(Action.MANAGE, PaddleEvent, {creatorId: user.userId})
+
+        //read+update events where user is in editors list
+        can([Action.READ, Action.UPDATE], PaddleEvent, { editors: {$elemMatch: {userId: user.userId}}} )
+
+        //everyone can list events
+        can(Action.LIST, PaddleEvent)
 
         return build({
             detectSubjectType: (item) => item.constructor as ExtractSubjectType<Subjects>

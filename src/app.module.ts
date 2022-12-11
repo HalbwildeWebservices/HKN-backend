@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { PhoneNumberModule } from './phoneNumbers/phone-number.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { CaslModule } from './casl/casl.module';
+import { EventsModule } from './paddle-event/paddle-event.module';
 
 const username = process.env.DBUSER ?? '';
 const password = process.env.DBPW ?? '';
@@ -34,6 +35,7 @@ const socketPath = process.env.DBSOCK ?? '';
     PhoneNumberModule,
     PermissionsModule,
     CaslModule,
+    EventsModule,
   ],
   controllers: [
     AppController,

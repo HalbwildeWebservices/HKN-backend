@@ -1,5 +1,6 @@
 import { Action } from 'src/casl/actions';
 import { AppAbility } from 'src/casl/casl-ability.factory';
+import { PaddleEvent } from 'src/paddle-event/models/paddle-event.model';
 import { UserPermission } from 'src/permissions/models/permissions.model';
 import { PhoneNumber } from 'src/phoneNumbers/models/phoneNumber.model';
 import { IPolicyHandler } from './policies.interfaces';
@@ -27,6 +28,18 @@ export class PhoneNumbersPolicy implements IPolicyHandler {
   }
   
   handle(ability: AppAbility, entities?: PhoneNumber): boolean {
+    return ability.can(this.action, entities);
+  }
+}
+
+export class PaddleEventPolicy implements IPolicyHandler {
+  private readonly action: Action;
+  
+  constructor(action: Action) {
+    this.action = action;
+  }
+  
+  handle(ability: AppAbility, entities?: PaddleEvent): boolean {
     return ability.can(this.action, entities);
   }
 }
