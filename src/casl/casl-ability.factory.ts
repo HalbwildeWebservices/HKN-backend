@@ -25,7 +25,7 @@ export class CaslAbilityFactory {
         Ability<[Action, Subjects]>
         >(Ability as AbilityClass<AppAbility>);
 
-        this.logger.log(JSON.stringify(user))
+        this.logger.log(`generating abilities for user ${user.username} permissions=${user.permissions.map((p) => p.name).join(', ')}`)
         const permissionList = user.permissions.map((p) => p.name);
         if (permissionList.includes(EPermission.READ_USER)) {
             can([Action.READ, Action.LIST], User);
