@@ -30,7 +30,7 @@
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
-    "hkn-common": "github:HalbwildeWebservices/HKN-common#1.0.15",
+    "hkn-common": "github:HalbwildeWebservices/HKN-common#1.0.16",
     "mariadb": "^3.0.1",
     "mysql2": "2.3.3",
     "passport": "^0.6.0",
