@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
-import { UserResponseDto } from 'src/users/dto/user-response.dto';
+import { User } from 'src/users/models/user.model';
 //import { readFileSync } from 'fs';
 
 @Injectable()
@@ -20,17 +20,16 @@ export class AuthService {
 
 
 
-  async validateUser(username: string, pass: string): Promise<UserResponseDto | null> {
+  async validateUser(username: string, pass: string): Promise<User | null> {
     const user = await this.usersService.findByUsername(username);
     const passOk = await compare(pass, user.password);
     if (user && passOk) {
-      const result = new UserResponseDto(user);
-      return result;
+      return user.get();
     }
     return null;
   }
 
-  async login(user: UserResponseDto) {
+  async login(user: User) {
     this.logger.log(`login of user ${user.username} (${user.userId})`);
     const payload = { 
       preferred_username: user.username, 
